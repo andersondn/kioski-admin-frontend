@@ -5,7 +5,7 @@ import { ChangeEvent, MouseEvent, ReactNode, useState } from 'react'
 // ** Next Imports
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import Image from "next/image";
+import Image from 'next/image'
 
 // ** MUI Components
 import Box from '@mui/material/Box'
@@ -36,9 +36,12 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
+import API from 'src/services/api'
+import { setCookie } from 'cookies-next'
 
 interface State {
   password: string
+  email: string
   showPassword: boolean
 }
 
@@ -64,6 +67,7 @@ const LoginPage = () => {
   // ** State
   const [values, setValues] = useState<State>({
     password: '',
+    email: '',
     showPassword: false
   })
 
@@ -82,9 +86,16 @@ const LoginPage = () => {
   const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
   }
-  const handlerLogin = () => {
-    if(values.password === '123456'){
-      router.push('/dashboard')
+  const handlerLogin = async () => {
+    const response = await API.post('/auth/login', {
+      email: values.email,
+      password: values.password
+    })
+
+    if (response.status === 200 && response.data.token) {
+      setCookie('Admin:AuthToken', response.data.token)
+      router.push('/')
+      console.log(response.data)
     }
   }
 
@@ -93,8 +104,7 @@ const LoginPage = () => {
       <Card sx={{ zIndex: 1 }}>
         <CardContent sx={{ padding: theme => `${theme.spacing(12, 9, 7)} !important` }}>
           <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Image src="/kioskiLogo.svg" alt="Kioski Logo" width={200} height={50} priority />
-
+            <Image src='/kioskiLogo.svg' alt='Kioski Logo' width={200} height={50} priority />
           </Box>
           <Box sx={{ mb: 6 }}>
             <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
@@ -103,13 +113,21 @@ const LoginPage = () => {
             <Typography variant='body2'>Faça o login para administrar seus kioskis</Typography>
           </Box>
           <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
-            <TextField autoFocus fullWidth id='email' label='E-mail' sx={{ marginBottom: 4 }} />
+            <TextField
+              autoFocus
+              fullWidth
+              value={values.email}
+              onChange={handleChange('email')}
+              id='email'
+              label='E-mail'
+              sx={{ marginBottom: 4 }}
+            />
             <FormControl fullWidth>
               <InputLabel htmlFor='auth-login-password'>Senha</InputLabel>
               <OutlinedInput
                 label='Password'
-                value={values.password}
                 id='auth-login-password'
+                value={values.password}
                 onChange={handleChange('password')}
                 type={values.showPassword ? 'text' : 'password'}
                 endAdornment={
@@ -126,21 +144,13 @@ const LoginPage = () => {
                 }
               />
             </FormControl>
-            <Box
-              sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
-            >
-              <FormControlLabel control={<Checkbox />} label='Remember Me' />
+            <Box sx={{ mb: 4, mt: 5, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'end' }}>
+              {/* <FormControlLabel control={<Checkbox />} label='Remember Me' /> */}
               <Link passHref href='/'>
                 <LinkStyled onClick={e => e.preventDefault()}>Esqueceu a senha?</LinkStyled>
               </Link>
             </Box>
-            <Button
-              fullWidth
-              size='large'
-              variant='contained'
-              sx={{ marginBottom: 7 }}
-              onClick={handlerLogin}
-            >
+            <Button fullWidth size='large' variant='contained' sx={{ marginBottom: 7 }} onClick={handlerLogin}>
               Entrar
             </Button>
             {/* <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>

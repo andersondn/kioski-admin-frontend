@@ -12,23 +12,34 @@ import GoogleCirclesExtended from 'mdi-material-ui/GoogleCirclesExtended'
 
 // ** Type import
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
+import { AccountGroup, GamepadOutline, GamepadVariantOutline, StorefrontOutline, Television } from 'mdi-material-ui'
 
 const navigation = (): VerticalNavItemsType => {
   return [
     {
       title: 'Kioskis',
-      icon: HomeOutline,
+      icon: Television,
       path: '/kioski'
     },
     {
       title: 'Estabelecimentos',
-      icon: HomeOutline,
-      path: '/companies'
+      icon: StorefrontOutline,
+      path: '/em-breve/estabelecimentos'
     },
     {
       title: 'Clientes',
+      icon: AccountGroup,
+      path: '/em-breve/clientes'
+    },
+    {
+      title: 'Jogos',
+      icon: GamepadVariantOutline,
+      path: '/em-breve/jogos'
+    },
+    {
+      title: 'Configurações',
       icon: HomeOutline,
-      path: '/clients'
+      path: '/em-breve/configuracoes'
     },
     {
       sectionTitle: 'Outros'

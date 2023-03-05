@@ -1,6 +1,7 @@
 import { getCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { createContext, useEffect, useState, useContext } from 'react'
+import API from 'src/services/api'
 
 type AuthContextType = {
   authenticated: boolean
@@ -13,7 +14,7 @@ export const AuthContext = createContext({} as AuthContextType)
 
 export function AuthProvider({ children }: any) {
   const [loading, setLoading] = useState(true)
-  const authToken = getCookie('admin:authToken')
+  const authToken = getCookie('Admin:AuthToken')
   const router = useRouter()
 
   const validate = async () => {
@@ -21,7 +22,23 @@ export function AuthProvider({ children }: any) {
       console.log(router.pathname)
       await router.push('/login')
       setLoading(false)
+
+      return
     }
+    try {
+      await API.get('/auth/validateSession').then((response) => {
+        if (response.status !== 200) {
+          router.push('/login')
+        }
+      })
+    } catch (error) {
+      router.push('/login')
+
+    }
+
+    setLoading(false)
+
+
   }
 
   useEffect(() => {
