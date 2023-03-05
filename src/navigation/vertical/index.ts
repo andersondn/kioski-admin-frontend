@@ -16,6 +16,24 @@ import { VerticalNavItemsType } from 'src/@core/layouts/types'
 const navigation = (): VerticalNavItemsType => {
   return [
     {
+      title: 'Kioskis',
+      icon: HomeOutline,
+      path: '/kioski'
+    },
+    {
+      title: 'Estabelecimentos',
+      icon: HomeOutline,
+      path: '/companies'
+    },
+    {
+      title: 'Clientes',
+      icon: HomeOutline,
+      path: '/clients'
+    },
+    {
+      sectionTitle: 'Outros'
+    },
+    {
       title: 'Dashboard',
       icon: HomeOutline,
       path: '/'

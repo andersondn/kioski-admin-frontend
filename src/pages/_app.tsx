@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 // ** Next Imports
 import Head from 'next/head'
 import { Router } from 'next/router'
@@ -29,6 +31,7 @@ import 'react-perfect-scrollbar/dist/css/styles.css'
 
 // ** Global css styles
 import '../../styles/globals.css'
+import { AuthProvider } from 'src/@core/context/AuthContext'
 
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
@@ -59,6 +62,8 @@ const App = (props: ExtendedAppProps) => {
   const getLayout = Component.getLayout ?? (page => <UserLayout>{page}</UserLayout>)
 
   return (
+    <AuthProvider>
+
     <CacheProvider value={emotionCache}>
       <Head>
         <title>{`${themeConfig.templateName} - Material Design React Admin Template`}</title>
@@ -78,6 +83,7 @@ const App = (props: ExtendedAppProps) => {
         </SettingsConsumer>
       </SettingsProvider>
     </CacheProvider>
+    </AuthProvider>
   )
 }
 

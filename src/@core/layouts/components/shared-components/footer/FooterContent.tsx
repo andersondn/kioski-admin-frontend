@@ -9,7 +9,8 @@ const FooterContent = () => {
   // ** Var
   const hidden = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
 
-  return (
+return(<></>);
+  const aaa=  (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
       <Typography sx={{ mr: 2 }}>
         {`© ${new Date().getFullYear()}, Made with `}
