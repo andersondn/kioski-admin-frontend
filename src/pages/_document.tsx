@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 // ** React Import
 import { Children } from 'react'
 
