@@ -1,4 +1,4 @@
-import { getCookie } from 'cookies-next'
+import { getCookie, setCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { createContext, useEffect, useState, useContext } from 'react'
 import API from 'src/services/api'
@@ -6,6 +6,9 @@ import API from 'src/services/api'
 type AuthContextType = {
   authenticated: boolean
   authToken: string
+  setToken: (token: string) => void
+  companyId: string
+  setCompany: (companyId: string) => void
 
   // setServer: (server: string) => void;
 }
@@ -14,36 +17,52 @@ export const AuthContext = createContext({} as AuthContextType)
 
 export function AuthProvider({ children }: any) {
   const [loading, setLoading] = useState(true)
-  const authToken = getCookie('Admin:AuthToken')
+  const [authToken, setAuthToken] = useState<string>('')
+  const [companyId, setCompanyId] = useState<string>('')
   const router = useRouter()
 
-  const validate = async () => {
-    if (!authToken && !router.pathname.startsWith('/login')) {
-      console.log(router.pathname)
-      await router.push('/login')
-      setLoading(false)
+  const redirectToLogin = async () => {
+    await router.push('/login')
+    setLoading(false)
+  }
 
-      return
-    }
+  const validate = async () => {
     try {
-      await API.get('/auth/validateSession').then((response) => {
+      await API.get('/auth/validateSession').then(response => {
         if (response.status !== 200) {
-          router.push('/login')
+          redirectToLogin()
         }
       })
     } catch (error) {
-      router.push('/login')
-
+      redirectToLogin()
     }
-
+    const localCompanyId = getCookie('Admin:CompanyId') as string
+    if (localCompanyId) {
+      setCompanyId(localCompanyId)
+    } else {
+      // router.push('/em-breve/setCompany')
+    }
     setLoading(false)
-
-
+  }
+  const setCompany = (companyId: string) => {
+    setCompanyId(companyId)
   }
 
   useEffect(() => {
-    validate()
+    const token = getCookie('Admin:AuthToken') as string
+    setAuthToken(token)
+
+    if (!token && !router.pathname.startsWith('/login')) {
+      redirectToLogin()
+    } else {
+      validate()
+    }
   }, [])
+
+
+  const setToken = (token: string) => {
+    setCookie('Admin:AuthToken', token)
+  }
 
   if (loading) return <div>Loading...</div>
 
@@ -52,7 +71,10 @@ export function AuthProvider({ children }: any) {
       <AuthContext.Provider
         value={{
           authenticated: !!authToken,
-          authToken: 'aaa'
+          authToken,
+          setToken,
+          companyId,
+          setCompany
         }}
       >
         {children}

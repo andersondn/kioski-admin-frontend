@@ -24,7 +24,7 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Estabelecimentos',
       icon: StorefrontOutline,
-      path: '/em-breve/estabelecimentos'
+      path: '/estabelecimentos'
     },
     {
       title: 'Clientes',

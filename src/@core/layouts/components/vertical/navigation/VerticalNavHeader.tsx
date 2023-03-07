@@ -39,7 +39,6 @@ const StyledLink = styled('a')({
   display: 'flex',
   alignItems: 'center',
   textDecoration: 'none',
-padding: '0 0 0 0',
 })
 
 const VerticalNavHeader = (props: Props) => {
@@ -57,7 +56,6 @@ const VerticalNavHeader = (props: Props) => {
         <Link href='/' passHref>
           <StyledLink>
           <Image src='/kioskiLogo.svg' alt='Kioski Logo' width={150} height={50} priority />
-
           </StyledLink>
         </Link>
       )}

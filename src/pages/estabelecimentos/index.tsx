@@ -1,21 +1,15 @@
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
 
-// ** Styled Component
-import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
-
-// ** Demo Components Imports
-import FormLayoutsBasic from 'src/views/form-layouts/FormLayoutsBasic'
-import FormLayoutsIcons from 'src/views/form-layouts/FormLayoutsIcons'
-import FormLayoutsSeparator from 'src/views/form-layouts/FormLayoutsSeparator'
-import FormLayoutsAlignment from 'src/views/form-layouts/FormLayoutsAlignment'
-
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
 import { Box, Button, Link, Modal, Typography } from '@mui/material'
 import { useState } from 'react'
+import useSWR from 'swr'
+import CompanyList from 'src/views/company/table'
 
-const FormLayouts = () => {
+
+const Companies = () => {
   const [open, setOpen] = useState(false)
   const handleOpen = () => {
     setOpen(true)
@@ -37,16 +31,30 @@ const FormLayouts = () => {
     pb: 3
   }
 
+  const { data: companies } = useSWR('/company')
+
+
   return (
-    <DatePickerWrapper>
+    <>
       <Grid container spacing={3}>
         <Grid item xs={9}>
-          <Typography variant='h5'>Lista de kioskis</Typography>
-          <Typography variant='body2'>Material Design Icons from the Community</Typography>
+          <Typography variant='h5'>Seus estabelecimentos</Typography>
+          <Typography variant='body2'>Esses são os estabelecimentos vinculados a sua conta.</Typography>
         </Grid>
-        <Grid item xs={2}>
-          <Button onClick={handleOpen}>Adicionar kioski</Button>
-          <Modal
+        <Grid item justifyItems={'end'} xs={3}>
+          <Button onClick={handleOpen}>Novo estabelecimento</Button>
+
+        </Grid>
+
+        <Grid item md={12}>
+<CompanyList companies={companies} />
+
+          {/* {JSON.stringify(companies)} */}
+        </Grid>
+
+      </Grid>
+
+      <Modal
             open={open}
             onClose={handleClose}
             aria-labelledby='modal-modal-title'
@@ -61,23 +69,8 @@ const FormLayouts = () => {
               </Typography>
             </Box>
           </Modal>
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <FormLayoutsBasic />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <FormLayoutsIcons />
-        </Grid>
-        <Grid item xs={12}>
-          <FormLayoutsSeparator />
-        </Grid>
-        <Grid item xs={12}>
-          <FormLayoutsAlignment />
-        </Grid>
-      </Grid>
-    </DatePickerWrapper>
+    </>
   )
 }
 
-export default FormLayouts
+export default Companies
