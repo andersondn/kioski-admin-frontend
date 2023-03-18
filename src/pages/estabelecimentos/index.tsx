@@ -7,7 +7,8 @@ import { Box, Button, Link, Modal, Typography } from '@mui/material'
 import { useState } from 'react'
 import useSWR from 'swr'
 import CompanyList from 'src/views/company/table'
-
+import { useCompanyContext } from 'src/@core/context/CompanyContext'
+import { Plus } from 'mdi-material-ui'
 
 const Companies = () => {
   const [open, setOpen] = useState(false)
@@ -31,8 +32,8 @@ const Companies = () => {
     pb: 3
   }
 
-  const { data: companies } = useSWR('/company')
-
+  // const { data: companies } = useSWR('/company', { refreshInterval: 5000 })
+  const { companies, company, changeCompany } = useCompanyContext()
 
   return (
     <>
@@ -41,34 +42,39 @@ const Companies = () => {
           <Typography variant='h5'>Seus estabelecimentos</Typography>
           <Typography variant='body2'>Esses são os estabelecimentos vinculados a sua conta.</Typography>
         </Grid>
-        <Grid item justifyItems={'end'} xs={3}>
-          <Button onClick={handleOpen}>Novo estabelecimento</Button>
 
+        <Grid container alignContent={'center'} justifyContent={'end'} xs={3}>
+          <Grid item justifyContent={'end'}>
+            <Button variant='contained' onClick={handleOpen}>
+              <Plus />
+              Novo estabelecimento
+            </Button>
+          </Grid>
         </Grid>
 
         <Grid item md={12}>
-<CompanyList companies={companies} />
+          <CompanyList companies={companies} changeCompany={changeCompany} />
 
           {/* {JSON.stringify(companies)} */}
+          {JSON.stringify(company)}
         </Grid>
-
       </Grid>
 
       <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby='modal-modal-title'
-            aria-describedby='modal-modal-description'
-          >
-            <Box sx={style}>
-              <Typography id='modal-modal-title' variant='h6' component='h2'>
-                Text in a modal
-              </Typography>
-              <Typography id='modal-modal-description' sx={{ mt: 2 }}>
-                Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-              </Typography>
-            </Box>
-          </Modal>
+        open={open}
+        onClose={handleClose}
+        aria-labelledby='modal-modal-title'
+        aria-describedby='modal-modal-description'
+      >
+        <Box sx={style}>
+          <Typography id='modal-modal-title' variant='h6' component='h2'>
+            Text in a modal
+          </Typography>
+          <Typography id='modal-modal-description' sx={{ mt: 2 }}>
+            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+          </Typography>
+        </Box>
+      </Modal>
     </>
   )
 }

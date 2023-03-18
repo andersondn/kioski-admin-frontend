@@ -29,12 +29,12 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Clientes',
       icon: AccountGroup,
-      path: '/em-breve/clientes'
+      path: '/clientes'
     },
     {
       title: 'Jogos',
       icon: GamepadVariantOutline,
-      path: '/em-breve/jogos'
+      path: '/jogos'
     },
     {
       title: 'Configurações',
