@@ -8,7 +8,8 @@ const API = axios.create({
 API.interceptors.request.use(config => {
   const token = getCookie('Admin:AuthToken')
   const companyId = getCookie('Admin:CompanyId')
-  console.log(token)
+
+  // console.log(token)
   config.headers = {
     ...config.headers,
     Authorization: `Bearer ${token}`,

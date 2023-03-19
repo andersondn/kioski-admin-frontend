@@ -40,6 +40,7 @@ export function AuthProvider({ children }: any) {
     if (localCompanyId) {
       setCompanyId(localCompanyId)
     } else {
+
       // router.push('/em-breve/setCompany')
     }
     setLoading(false)

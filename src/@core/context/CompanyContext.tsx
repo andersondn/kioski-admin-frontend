@@ -50,6 +50,8 @@ export function CompanyProvider({ children }: any) {
     setCompany(newCompany)
     setCookie('Admin:CompanyId', newCompany.id)
     setCompanyModal(false)
+
+    // Limpa cache do swr
     const keys = [...cache.keys()]
     keys.forEach(key => {
       mutate(key)
@@ -63,8 +65,11 @@ export function CompanyProvider({ children }: any) {
       const company = companies?.find((company: any) => company.id === localCompanyId)
       if (company) {
         return setCompany(company)
+      }else {
+        showCompanyModal()
       }
     }
+
     if (companies.length > 0 && !company) {
       if (companies.length === 1) {
         setCompany(companies[0])

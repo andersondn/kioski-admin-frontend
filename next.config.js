@@ -3,7 +3,7 @@ const path = require('path')
 module.exports = {
   trailingSlash: true,
   images: {
-    domains: ['picsum.photos']
+    domains: ['picsum.photos', 'files.fox.andy.plus']
 
   },
   reactStrictMode: false,

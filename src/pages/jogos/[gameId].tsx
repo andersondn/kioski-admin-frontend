@@ -19,7 +19,8 @@ import {
   Divider,
   Typography,
   CardActions,
-  styled
+  styled,
+  Fade
 } from '@mui/material'
 import { useState } from 'react'
 import useSWR from 'swr'
@@ -30,12 +31,27 @@ import { useRouter } from 'next/router'
 import Image from 'next/dist/client/image'
 import { Plus } from 'mdi-material-ui'
 import AddPrizeForm from 'src/@core/components/games/AddPrize'
+import DeletePrizeModal from 'src/@core/components/games/DeletePrize'
+import useModal from 'src/@core/hooks/useModal'
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 800,
+  pt: 2,
+  px: 4,
+  pb: 3
+}
+
 
 const Games = () => {
   const [open, setOpen] = useState(false)
+  const {selected, isShowing, close, open: openModal} = useModal();
 
   const router = useRouter()
-  const { gameId } = router.query
+  const { gameId } = router.query as any
 
   const handleOpen = () => {
     setOpen(true)
@@ -43,19 +59,7 @@ const Games = () => {
   const handleClose = () => {
     setOpen(false)
   }
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    borderRadius: 2,
-    boxShadow: 24,
-    pt: 2,
-    px: 4,
-    pb: 3
-  }
+
 
   const { data: game, isLoading, error } = useSWR(`/games/${gameId}`, {})
 
@@ -63,26 +67,7 @@ const Games = () => {
   if (isLoading) return <div>Carregando...</div>
   if (error) return <div>Erro ao carregar {JSON.stringify(error)}</div>
 
-  const columns: GridColDef[] = [
-    {
-      field: 'image',
-      headerName: 'Imagem',
-      minWidth: 150,
-      align: 'center',
-      disableColumnMenu: true,
-      sortable: false,
-      renderCell: (params: GridRenderCellParams<Date>) => (
-        <Image src='https://picsum.photos/200' width={150} height={200} />
-      )
-    },
-
-    // { field: 'gameId', headerName: 'ID', width: 70 },
-    { field: 'name', headerName: 'Nome', minWidth: 150, flex: 0.5, disableColumnMenu: true, sortable: false },
-    { field: 'weight', headerName: 'Peso', minWidth: 50, disableColumnMenu: true, sortable: false },
-    { field: 'createdAt', headerName: 'Ações', minWidth: 100, disableColumnMenu: true, sortable: false }
-  ]
-
-  return (
+return (
     <>
       <Grid container spacing={3}>
         <Grid item xs={9}>
@@ -93,7 +78,7 @@ const Games = () => {
           <Grid item justifyContent={'end'}>
             <Button variant='contained' onClick={handleOpen}>
               <Plus />
-              Adicionar premio
+              Adicionar prêmio
             </Button>
           </Grid>
         </Grid>
@@ -101,28 +86,21 @@ const Games = () => {
         <Grid item md={12}>
           <Grid container spacing={5}>
             {game.prizes.map((prize: any) => (
-              <PrizeCard key={prize.prizeId} prize={prize} />
+              <PrizeCard key={prize.prizeId} prize={prize} deleteFunction={
+                () => openModal(prize)
+              } />
             ))}
           </Grid>
         </Grid>
       </Grid>
-
-          <AddPrizeForm />
-
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby='modal-modal-title'
-        aria-describedby='modal-modal-description'
-      >
-        <Box sx={style}>
-          <Typography id='modal-modal-title' variant='h6' component='h2'>
-            Text in a modal
-          </Typography>
-          <Typography id='modal-modal-description' sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </Typography>
-        </Box>
+      <DeletePrizeModal gameId={gameId} prize={selected} show={isShowing}  close={close}  />
+      <Modal open={open} onClose={handleClose} closeAfterTransition disableAutoFocus={true}>
+        <Fade in={open}>
+          <Box sx={style}>
+            <AddPrizeForm gameId={gameId as string}
+            close={() => setOpen(false)} />
+          </Box>
+        </Fade>
       </Modal>
     </>
   )
@@ -133,27 +111,24 @@ const StyledGrid = styled(Grid)<GridProps>(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  [theme.breakpoints.down('md')]: {
-    borderBottom: `1px solid ${theme.palette.divider}`
-  },
+
   [theme.breakpoints.up('md')]: {
     borderRight: `1px solid ${theme.palette.divider}`
   }
 }))
-const PrizeCard = ({ prize }: any) => {
+const PrizeCard = ({ prize, deleteFunction }: any) => {
   return (
-    <Grid item sm={6}>
+    <Grid item md={6} sm={12}>
       <Card>
         <Grid container spacing={6}>
-          <StyledGrid item xs={5}>
+          <StyledGrid item >
             <CardContent sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {/* <img width={107} height={90} alt='Apple iPhone 11 Pro' src='/images/cards/iPhone-11-pro.png' /> */}
-              <Image className='rounded' alt={prize.name} src='https://picsum.photos/200' width={200} height={120} />
+              <Image objectFit='cover' className='rounded' alt={prize.name} src={prize.image} width={220} height={150} />
             </CardContent>
           </StyledGrid>
           <Grid
             item
-            xs={7}
+
             sx={{
               paddingTop: ['0 !important', '0 !important', '1.5rem !important'],
               paddingLeft: ['1.5rem !important', '1.5rem !important', '0 !important']
@@ -179,7 +154,7 @@ const PrizeCard = ({ prize }: any) => {
             <CardActions className='card-action-dense'>
               <Box sx={{ display: 'flex', justifyContent: 'start', width: '100%' }}>
                 <Button>Editar</Button>
-                <Button>Remover</Button>
+                <Button onClick={deleteFunction}>Remover</Button>
               </Box>
             </CardActions>
           </Grid>
