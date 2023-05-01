@@ -71,7 +71,7 @@ return (
     <>
       <Grid container spacing={3}>
         <Grid item xs={9}>
-          <Typography variant='h5'>{game.name}</Typography>
+          <Typography variant='h5'>Jogos: {game.name}</Typography>
           <Typography variant='body2'>Aqui você pode criar e gerenciar os jogos.</Typography>
         </Grid>
         <Grid container alignContent={'center'} justifyContent={'end'} xs={3}>

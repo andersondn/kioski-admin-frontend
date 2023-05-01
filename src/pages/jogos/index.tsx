@@ -8,6 +8,7 @@ import {
   Button,
   Card,
   CardContent,
+  Fade,
   Link,
   Modal,
   Table,
@@ -25,6 +26,8 @@ import { useCompanyContext } from 'src/@core/context/CompanyContext'
 import { DataGrid, GridColDef, GridRenderCellParams, GridValueGetterParams, ptBR } from '@mui/x-data-grid'
 import { useRouter } from 'next/router'
 import { Plus } from 'mdi-material-ui'
+import AddPrizeForm from 'src/@core/components/games/AddPrize'
+import AddGameForm from 'src/@core/components/games/AddGameForm'
 
 const Games = () => {
   const [open, setOpen] = useState(false)
@@ -123,14 +126,12 @@ const Games = () => {
         aria-labelledby='modal-modal-title'
         aria-describedby='modal-modal-description'
       >
-        <Box sx={style}>
-          <Typography id='modal-modal-title' variant='h6' component='h2'>
-            Text in a modal
-          </Typography>
-          <Typography id='modal-modal-description' sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </Typography>
-        </Box>
+        <Fade in={open}>
+          <Box sx={style}>
+            <AddGameForm
+            close={() => setOpen(false)} />
+          </Box>
+        </Fade>
       </Modal>
     </>
   )
